@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from duffel_api import Duffel
-import json
 
 access_token = "duffel_test_83IaIdX58kDt2kWhvu3mMQZkbZB2mfsfPE5sO-KHld-"
 duffel = Duffel(access_token=access_token)
@@ -54,9 +53,9 @@ with open('logs/offer.txt', 'w') as offer_txt:
 
             offer_txt.write("\n")
 
-        offer_txt.write("Base Amount : $" + str(offers[offer_idx].base_amount) + "\n")
-        offer_txt.write("Fare Taxes : $" + str(offers[offer_idx].tax_amount) + "\n")
-        offer_txt.write("Total Amount : $" + str(offers[offer_idx].total_amount) + "\n")
+        offer_txt.write("Base Amount".ljust(13) + ": $" + str(offers[offer_idx].base_amount) + "\n")
+        offer_txt.write("Fare Taxes".ljust(13) + ": $" + str(offers[offer_idx].tax_amount) + "\n")
+        offer_txt.write("Total Amount".ljust(13) + ": $" + str(offers[offer_idx].total_amount) + "\n")
         offer_txt.write("-----------------------------------------------------------------\n")
 
 # with open("logs/all_offers.txt", "w") as all_offers_txt:
