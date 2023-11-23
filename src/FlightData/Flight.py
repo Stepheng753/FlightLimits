@@ -33,7 +33,5 @@ class Flight:
         price_string += "Total Amount".ljust(13) + ": $" + str(self.total_amt)
         return price_string.strip()
 
-
-
     def __eq__(self, __value: object) -> bool:
         return self.stops == __value.stops
