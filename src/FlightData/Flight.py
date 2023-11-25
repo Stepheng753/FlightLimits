@@ -1,3 +1,4 @@
+from datetime import datetime
 
 class Flight:
 
@@ -7,6 +8,7 @@ class Flight:
         self.base_amt = base_amt
         self.fare_taxes = fare_taxes
         self.total_amt = round(base_amt + fare_taxes, 2)
+        self.time_created = datetime.now()
 
     def __str__(self) -> str:
         rtnStr = "-----------------------------------------------------------------\n"

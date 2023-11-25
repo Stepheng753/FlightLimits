@@ -18,7 +18,7 @@ class TrackFlightData:
         self.passengers = passengers
         self.cabin_class = cabin_class
         self.limit_value = limit_value
-        self.all_offers = []
+        self.selected_flight = None
 
     def set_slices(self, origin, destination, depart_date, arrive_date=None) -> None:
         self.slices = [{
@@ -43,109 +43,76 @@ class TrackFlightData:
     def set_limit_value(self, limit_value) -> None:
         self.limit_value = limit_value
 
-    def set_selected_flight_choice_idx(self, selected_flight_choice_idx) -> None:
-        self.selected_flight_choice_idx = selected_flight_choice_idx
+    def set_selected_flight(self, selected_flight) -> None:
+        self.selected_flight = selected_flight
 
-    def set_all_offers(self) -> None:
+    def offer_to_Flight(self, offer) -> Flight:
+        offer_id = offer.id
+        stop_info = []
+
+        # This is the TO DESTINATION info and the BACK HOME info
+        for each_way_idx in range(0, 2):
+            num_stops = len(offer.slices[each_way_idx].segments)
+
+            # This is the seperate stops for each flight
+            for stop_idx in range(0, num_stops):
+                curr_stop_info = offer.slices[each_way_idx].segments[stop_idx]
+
+                stop_info.append({
+                    "carrier_name" : curr_stop_info.marketing_carrier.name,
+                    "carrier_iata_code" : curr_stop_info.marketing_carrier.iata_code,
+                    "carrier_flight_num" : curr_stop_info.marketing_carrier_flight_number,
+                    "origin" : curr_stop_info.origin.iata_code,
+                    "destination" : curr_stop_info.destination.iata_code,
+                    "depart_time" : curr_stop_info.departing_at,
+                    "arrive_time" : curr_stop_info.arriving_at
+                    })
+
+        return Flight(id=offer_id, stops=stop_info, base_amt=float(offer.base_amount), fare_taxes=float(offer.tax_amount))
+
+    def get_all_offers(self) -> list:
         offer_request = duffel.offer_requests.create() \
                 .slices(self.slices) \
                 .passengers(self.passengers) \
                 .cabin_class(self.cabin_class) \
                 .return_offers() \
                 .execute()
-
         offers = offer_request.offers
 
-        for offer_idx in range(0, 5):
-            offer_id = offers[offer_idx].id
-            stop_info = []
+        all_offers = []
+        for offer in offers:
+            curr_flight_offer = self.offer_to_Flight(offer)
+            all_offers.append(curr_flight_offer)
+        return all_offers
 
-            # This is the TO DESTINATION info and the BACK HOME info
-            for each_way_idx in range(0, 2):
-                num_stops = len(offers[offer_idx].slices[each_way_idx].segments)
+    def get_updated_selected_flight_info(self) -> Flight:
+        all_offers = self.get_all_offers()
 
-                # This is the seperate stops for each flight
-                for stop_idx in range(0, num_stops):
-                    curr_stop_info = offers[offer_idx].slices[each_way_idx].segments[stop_idx]
+        for offer in all_offers:
+            if offer == self.selected_flight:
+                return offer
 
-                    stop_info.append({
-                        "carrier_name" : curr_stop_info.marketing_carrier.name,
-                        "carrier_iata_code" : curr_stop_info.marketing_carrier.iata_code,
-                        "carrier_flight_num" : curr_stop_info.marketing_carrier_flight_number,
-                        "origin" : curr_stop_info.origin.iata_code,
-                        "destination" : curr_stop_info.destination.iata_code,
-                        "depart_time" : curr_stop_info.departing_at,
-                        "arrive_time" : curr_stop_info.arriving_at
-                        })
-
-            curr_flight_offer = Flight(id=offer_id, stops=stop_info, base_amt=float(offers[offer_idx].base_amount), fare_taxes=float(offers[offer_idx].tax_amount))
-            self.all_offers.append(curr_flight_offer)
-
-    def get_selected_flight_info(self) -> object:
-        current_time = datetime.now()
-        current_total_price = self.all_offers[self.selected_flight_choice_idx].total_amt
-        return {"time" : current_time, "price" : current_total_price}
-
-    def get_updated_selected_flight_info(self) -> object:
-        offer_request = duffel.offer_requests.create() \
-                .slices(self.slices) \
-                .passengers(self.passengers) \
-                .cabin_class(self.cabin_class) \
-                .return_offers() \
-                .execute()
-
-        offers = offer_request.offers
-
-        for offer_idx in range(0, 5):
-            offer_id = offers[offer_idx].id
-            stop_info = []
-
-            # This is the TO DESTINATION info and the BACK HOME info
-            for each_way_idx in range(0, 2):
-                num_stops = len(offers[offer_idx].slices[each_way_idx].segments)
-
-                # This is the seperate stops for each flight
-                for stop_idx in range(0, num_stops):
-                    curr_stop_info = offers[offer_idx].slices[each_way_idx].segments[stop_idx]
-
-                    stop_info.append({
-                        "carrier_name" : curr_stop_info.marketing_carrier.name,
-                        "carrier_iata_code" : curr_stop_info.marketing_carrier.iata_code,
-                        "carrier_flight_num" : curr_stop_info.marketing_carrier_flight_number,
-                        "origin" : curr_stop_info.origin.iata_code,
-                        "destination" : curr_stop_info.destination.iata_code,
-                        "depart_time" : curr_stop_info.departing_at,
-                        "arrive_time" : curr_stop_info.arriving_at
-                        })
-
-            curr_flight_offer = Flight(id=offer_id, stops=stop_info, base_amt=float(offers[offer_idx].base_amount), fare_taxes=float(offers[offer_idx].tax_amount))
-
-            if curr_flight_offer == self.all_offers[self.selected_flight_choice_idx]:
-                current_time = datetime.now()
-                current_total_price = curr_flight_offer.total_amt
-                return {"time" : current_time, "price" : current_total_price}
-
-    def log_flight_prices(self, file_dir, num_iterations, time_interval=0):
+    def log_flight_prices(self, file_dir, num_iterations, time_interval=0) -> str:
         origin = self.slices[0]["origin"]
         destination = self.slices[0]["destination"]
-        current_time = datetime.now().strftime("%m%d%Y_%H-%M-%S")
+        current_time = datetime.now().strftime("%m%d%Y_%H-%M")
         save_file = file_dir + origin + "_" + destination + "-" + current_time + ".log"
         with open(save_file, "w") as log_file:
-            og_info = self.get_selected_flight_info()
             log_file.write("-----------------------------------------------------------------\n")
-            log_file.write(str(self.all_offers[self.selected_flight_choice_idx].stops_str()) + "\n")
+            log_file.write(str(self.selected_flight.stops_str()) + "\n")
             log_file.write("-----------------------------------------------------------------\n")
             log_file.write("\n")
-            log_file.write(og_info["time"].strftime("%m/%d/%y %I:%M:%S %p") + " :: $" + str(og_info["price"]) + "\n")
+            log_file.write(self.selected_flight.time_created.strftime("%m/%d/%y %I:%M:%S %p") + " :: " + \
+                            self.selected_flight.id + " :: $" + "{0:.2f}".format(self.selected_flight.total_amt) + "\n")
             for _ in range(0, num_iterations - 1):
                 time.sleep(time_interval)
                 curr_info = self.get_updated_selected_flight_info()
-                log_file.write(curr_info["time"].strftime("%m/%d/%y %I:%M:%S %p") + " :: $" + str(curr_info["price"]) + "\n")
+                log_file.write(curr_info.time_created.strftime("%m/%d/%y %I:%M:%S %p") + " :: " + \
+                                curr_info.id + " :: $" + "{0:.2f}".format(curr_info.total_amt) + "\n")
 
         return save_file
 
     def plot_flight_prices(self, log_file) -> str:
-
         time_values = []
         price_values = []
 
@@ -154,7 +121,7 @@ class TrackFlightData:
             first_log_idx = lines.index('\n') + 1
             first_time_val = datetime.strptime(lines[first_log_idx][:20].strip(), "%m/%d/%y %I:%M:%S %p")
             for i in range(first_log_idx, len(lines)):
-                time = datetime.strptime(lines[i][:20].strip(), "%m/%d/%y %I:%M:%S %p")
+                time = datetime.strptime(lines[i][:lines[i].index("::") - 1].strip(), "%m/%d/%y %I:%M:%S %p")
                 price = float(lines[i][lines[i].index("$") + 1 : ].strip())
 
                 time_values.append((time - first_time_val).total_seconds())
@@ -162,7 +129,7 @@ class TrackFlightData:
 
         limit_vals = [self.limit_value for _ in price_values]
 
-        carrier_name = self.all_offers[self.selected_flight_choice_idx].stops[0]["carrier_name"]
+        carrier_name = self.selected_flight.stops[0]["carrier_name"]
         origin = self.slices[0]["origin"]
         destination = self.slices[0]["destination"]
 
@@ -180,3 +147,18 @@ class TrackFlightData:
         plt.savefig(save_path)
 
         return save_path
+
+    def calculate_time_interval_btwn_calls(self, total_seconds) -> float:
+        MAX_CALLS = 1_500
+        return total_seconds / MAX_CALLS
+
+
+    def get_flight_at_limit(self, total_seconds) -> str:
+        time_interval = self.calculate_time_interval_btwn_calls(total_seconds)
+        time_interval = 10 if time_interval < 1 else time_interval
+        for _ in range(0, 15):
+            curr_info = self.get_updated_selected_flight_info()
+            if curr_info.total_amt <= self.limit_value:
+                print(duffel.offers.get(curr_info.id))
+                return curr_info.id
+            time.sleep(time_interval)

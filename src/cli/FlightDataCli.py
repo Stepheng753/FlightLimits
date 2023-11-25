@@ -46,24 +46,27 @@ class FlightDataCli:
         print("\n")
 
     def display_offers(self) -> None:
-        for offer_idx in range(0, len(self.TrackFlightData.all_offers)):
+        all_offers = self.TrackFlightData.get_all_offers()
+        for offer_idx in range(0, 5):
             print("-----------------------------------------------------------------")
             print("Choice: " + str(offer_idx + 1) + "\n" + \
-                        self.TrackFlightData.all_offers[offer_idx].stops_str() + "\n" + \
-                        self.TrackFlightData.all_offers[offer_idx].price_str())
+                        all_offers[offer_idx].stops_str() + "\n" + \
+                        all_offers[offer_idx].price_str())
             print("-----------------------------------------------------------------")
 
         print("\n")
+        return all_offers
 
-    def input_choose_offer(self) -> None:
-        self.TrackFlightData.set_selected_flight_choice_idx( \
-            int(input(self.input_format("Enter which Flight you would like to Watch"))) - 1)
+    def input_choose_offer(self, all_offers) -> None:
+        selected_flight_idx = int(input(self.input_format("Enter which Flight you would like to Watch"))) - 1
+        self.TrackFlightData.set_selected_flight(all_offers[selected_flight_idx])
 
         print("\n")
+        return selected_flight_idx
 
-    def display_selected_offer(self) -> None:
-        print("Selected Flight: " + str(self.TrackFlightData.selected_flight_choice_idx + 1))
-        print(self.TrackFlightData.all_offers[self.TrackFlightData.selected_flight_choice_idx])
+    def display_selected_offer(self, selected_flight_idx) -> None:
+        print("Selected Flight: " + str(selected_flight_idx + 1))
+        print(self.TrackFlightData.selected_flight)
 
         print("\n")
 
