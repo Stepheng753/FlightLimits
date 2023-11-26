@@ -25,7 +25,7 @@ class FlightDataTracker:
             "departure_date": arrive_date,
         }]
         if arrive_date is None:
-            self.slices = self.slices[0]
+            self.slices = [self.slices[0]]
 
     def set_passengers(self, passengers) -> None:
         self.passengers = passengers

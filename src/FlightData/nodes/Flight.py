@@ -20,7 +20,7 @@ class Flight:
         self.stops = []
 
         # This is the TO DESTINATION info and the BACK HOME info
-        for each_way_idx in range(0, 2):
+        for each_way_idx in range(0, len(self.offer.slices)):
             num_stops = len(self.offer.slices[each_way_idx].segments)
 
             # This is the seperate stops for each flight
