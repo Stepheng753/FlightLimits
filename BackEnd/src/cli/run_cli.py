@@ -12,7 +12,7 @@ if __name__ == "__main__":
     input_log_values = cli.input_log_parameters()
     cli.display_log_plot_completion("../logs/", input_log_values)
 
-    # input_limit_values = cli.input_limit_parameters()
-    # cli.display_flight_to_order(input_limit_values)
-    # cli.input_passenger_data()
-    # cli.display_order_completion()
+    input_limit_values = cli.input_limit_parameters()
+    cli.display_flight_to_order(input_limit_values)
+    cli.input_passenger_data()
+    cli.display_order_completion()
