@@ -6,19 +6,19 @@ from FlightData.FlightDataPmt import FlightDataPmt
 
 if __name__ == "__main__":
     tracker = FlightDataTracker()
-    tracker.set_slices("CLT", "SAN", "2024-01-01", "2024-01-30")
-    tracker.set_passengers([{"age" : 23}])
-    tracker.set_cabin_class("economy")
+    tracker.set_slices(origin="CLT", destination="SAN", depart_date="2024-01-01", arrive_date="2024-01-30")
+    tracker.set_passengers(passengers=[{"age" : 23}])
+    tracker.set_cabin_class(cabin_class="economy")
     all_offers = tracker.get_all_offers()
-    tracker.set_selected_flight(all_offers[0])
+    tracker.set_selected_flight(selected_flight=all_offers[0])
 
-    logger = FlightDataLogger(tracker ,"logs/")
-    logger.set_times_prices(25, 0)
-    logger.create_log()
-    logger.create_plot(375)
+    logger = FlightDataLogger(Tracker=tracker, log_dir="logs/")
+    logger.get_all_offers(num_iterations=25, time_interval=0)
+    logger.create_log(print_all_offers=False)
+    logger.create_plot(limit_value=375)
 
-    limit = FlightDataLimit(tracker, 375)
-    flight = limit.get_flight_at_limit(25, 0)
+    limit = FlightDataLimit(Tracker=tracker, limit_val=375)
+    flight = limit.get_flight_at_limit(max_iterations=25, time_interval=0)
     flight.passengers[0].set_age(23)
     flight.passengers[0].set_family_name("TEST")
     flight.passengers[0].set_given_name("Stephen")
@@ -28,5 +28,5 @@ if __name__ == "__main__":
     flight.passengers[0].set_phone_number("+18582165827")
     flight.passengers[0].set_email("StephenG753@Gmail.com")
 
-    pmt = FlightDataPmt(flight)
+    pmt = FlightDataPmt(flight=flight)
     pmt.create_order()

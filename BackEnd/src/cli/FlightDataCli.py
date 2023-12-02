@@ -83,7 +83,7 @@ class FlightDataCli:
 
     def display_log_plot_completion(self, log_dir, input_log_values) -> None:
         logger = FlightDataLogger(self.tracker, log_dir)
-        logger.set_times_prices(input_log_values["num_points"], input_log_values["time_interval"])
+        logger.get_all_offers(input_log_values["num_points"], input_log_values["time_interval"])
         logger.create_log()
         logger.create_plot(input_log_values["limit_value"])
 

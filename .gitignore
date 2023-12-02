@@ -1,7 +1,8 @@
 __pycache__
+trash_logs/
 # Logs
-logs
-*.log
+FrontEnd/logs
+FrontEnd/*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
