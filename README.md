@@ -1,5 +1,3 @@
-[CLT_SAN-12022023_04-37.log](https://github.com/Stepheng753/FlightLimits/files/13534610/CLT_SAN-12022023_04-37.log)
-
 # FlightLimits
 
 ## Introduction 
