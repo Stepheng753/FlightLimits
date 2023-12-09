@@ -5,12 +5,12 @@ import reactLogo from './assets/react.svg';
 import viteLogo from './assets/vite.svg';
 import './css/App.css';
 
-function BoilerPlate() {
+function Home() {
 	const count = signal(0);
 	const [redirect, setRedirect] = useState(false);
 
 	if (redirect == true) {
-		return <Navigate to={'payment-portal'} />;
+		return <Navigate to={'/payment-portal'} />;
 	}
 
 	return (
@@ -38,4 +38,4 @@ function BoilerPlate() {
 	);
 }
 
-export default BoilerPlate;
+export default Home;

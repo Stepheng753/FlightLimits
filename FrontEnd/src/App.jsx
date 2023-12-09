@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import BoilerPlate from './BoilerPlate';
+import Home from './Home';
 import PaymentPortal from './Payments/PaymentPortal';
 
 function App() {
@@ -7,7 +7,7 @@ function App() {
 		<div>
 			<Router>
 				<Routes>
-					<Route path="/" element={<BoilerPlate />} />
+					<Route path="/" element={<Home />} />
 					<Route path="/payment-portal" element={<PaymentPortal />} />
 				</Routes>
 			</Router>

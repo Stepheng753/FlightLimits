@@ -23,9 +23,9 @@ class FlightDataCli:
         print("\t2) Round Trip")
         one_round_way = input(self.input_format("Enter One Way or Round Trip"))
         depart_date = input(self.input_format("Enter in Departure Date (YYYY-MM-DD)"))
-        arrive_date = None
+        return_date = None
         if ("2" in one_round_way.lower()) or ("round" in one_round_way.lower()):
-            arrive_date = input(self.input_format("Enter in Arrival Date (YYYY-MM-DD)"))
+            return_date = input(self.input_format("Enter in Return Date (YYYY-MM-DD)"))
 
         num_adult_passengers = int(input(self.input_format("Enter in the Number of Adult Passengers")))
         num_child_passengers = int(input(self.input_format("Enter in the Number of Child Passengers")))
@@ -42,7 +42,7 @@ class FlightDataCli:
             print("\t" + str(cabin_idx + 1) + ") " + cabin_classes[cabin_idx].capitalize())
         cabin_class_idx = int(input(self.input_format("Enter in the Cabin Class")))
 
-        self.tracker.set_slices(origin, destination, depart_date, arrive_date)
+        self.tracker.set_slices(origin, destination, depart_date, return_date)
         self.tracker.set_passengers(passengers)
         self.tracker.set_cabin_class(cabin_classes[cabin_class_idx - 1])
 

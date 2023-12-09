@@ -13,7 +13,7 @@ class FlightDataTracker:
         self.cabin_class = cabin_class
         self.selected_flight = None
 
-    def set_slices(self, origin, destination, depart_date, arrive_date=None) -> None:
+    def set_slices(self, origin, destination, depart_date, return_date=None) -> None:
         self.slices = [{
             "origin": origin,
             "destination": destination,
@@ -22,9 +22,9 @@ class FlightDataTracker:
         {
             "origin": destination,
             "destination": origin,
-            "departure_date": arrive_date,
+            "departure_date": return_date,
         }]
-        if arrive_date is None:
+        if return_date is None:
             self.slices = [self.slices[0]]
 
     def set_passengers(self, passengers) -> None:
