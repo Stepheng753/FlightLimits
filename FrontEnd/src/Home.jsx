@@ -1,39 +1,34 @@
 import { useState } from 'react';
-import { signal } from '@preact/signals-react';
 import { Navigate } from 'react-router-dom';
-import reactLogo from './assets/react.svg';
-import viteLogo from './assets/vite.svg';
+import githubLogo from './assets/github.png';
+import duffelLogo from './assets/duffel.png';
 import './css/App.css';
 
 function Home() {
-	const count = signal(0);
-	const [redirect, setRedirect] = useState(false);
-
-	if (redirect == true) {
-		return <Navigate to={'/payment-portal'} />;
+	const [redirect, setRedirect] = useState({ to: '' });
+	if (redirect.to.length > 0) {
+		return <Navigate to={redirect.to} />;
 	}
 
 	return (
 		<>
 			<div>
-				<a href="https://vitejs.dev" target="_blank">
-					<img src={viteLogo} className="logo" alt="Vite logo" />
+				<a href="https://github.com/Stepheng753/FlightLimits" target="_blank">
+					<img src={githubLogo} className="logo" alt="Github logo" />
 				</a>
-				<a href="https://react.dev" target="_blank">
-					<img src={reactLogo} className="logo react" alt="React logo" />
+				<a href="https://duffel.com/docs/guides/getting-started-with-flights" target="_blank">
+					<img src={duffelLogo} className="logo" alt="Duffel logo" />
 				</a>
 			</div>
-			<h1>Vite + React</h1>
-			<button onClick={() => setRedirect(!redirect)}>
+			<h1>Flight Limits</h1>
+			<button onClick={() => setRedirect({ to: '/payment-portal' })}>
 				<h3>Click Here for Payment Portal</h3>
 			</button>
-			<div className="card">
-				<button onClick={() => count.value++}>count is {count}</button>
-				<p>
-					Edit <code>src/Home.jsx</code> and save to test HMR
-				</p>
-			</div>
-			<p className="read-the-docs">Click on the Vite and React logos to learn more</p>
+			<br />
+			<br />
+			<button onClick={() => setRedirect({ to: '/search-flights' })}>
+				<h3>Click Here to Search Flights</h3>
+			</button>
 		</>
 	);
 }

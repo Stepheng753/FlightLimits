@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { DuffelPayments } from '@duffel/components';
 import '../css/App.css';
-import airplane from '../assets/airplane_loading.gif';
+import airplane from '../assets/airplane.gif';
 import fetchImg from '../assets/fetch.gif';
 
 function PaymentPortal() {
@@ -10,22 +10,22 @@ function PaymentPortal() {
 	const [duffelPmtElement, setDuffelPmtElement] = useState(<h4>No Payment Intent Client Token</h4>);
 	const [tokenWaiting, setTokenWaiting] = useState(false);
 	const [loadingImg, setLoadingImg] = useState(airplane);
-	const [redirect, setRedirect] = useState(false);
+	const [redirect, setRedirect] = useState({ to: '' });
 
-	if (redirect == true) {
-		return <Navigate to={'/'} />;
+	if (redirect.to.length > 0) {
+		return <Navigate to={redirect.to} />;
 	}
 
 	function getToken() {
 		if (!tokenWaiting) {
+			setDuffelPmtElement(<h4>No Payment Intent Client Token</h4>);
 			setTokenWaiting(true);
 			setRunPyText('Fetching Payment Intent Client Token');
-			setDuffelPmtElement(<h4>No Payment Intent Client Token</h4>);
 			setLoadingImg(fetchImg);
-			fetch('/api/run')
+
+			fetch('/api/run', { method: 'GET' })
 				.then((res) => res.json())
 				.then((data) => {
-					console.log(data);
 					setDuffelPmtElement(
 						<DuffelPayments
 							paymentIntentClientToken={data.client_token}
@@ -34,9 +34,11 @@ function PaymentPortal() {
 							debug={false}
 						/>
 					);
-					setRunPyText('run.py');
 					setTokenWaiting(false);
+					setRunPyText('run.py');
 					setLoadingImg(airplane);
+
+					console.log(data);
 				});
 		} else {
 			console.log('Currently Fetching Payment Intent Client Token');
@@ -50,7 +52,7 @@ function PaymentPortal() {
 					src={loadingImg}
 					className="logo airplane"
 					alt="Flight Limits"
-					onClick={() => setRedirect(!redirect)}
+					onClick={() => setRedirect({ to: '/' })}
 				/>
 			</div>
 			<h1>Payment Portal</h1>

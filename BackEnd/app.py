@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from flask import Flask
+from flask import Flask, request
 from duffel_api import Duffel
 from FlightData.FlightDataTracker import FlightDataTracker
 from FlightData.FlightDataLogger import FlightDataLogger
@@ -44,6 +44,13 @@ def main():
     pmt = FlightDataPmt(flight=flight)
     pmt.create_payment_intent()
     return {"client_token" : pmt.pmt_intent.client_token}
+
+@app.route("/api/post_test", methods=["POST"])
+def post_test():
+    print("======================================")
+    print(request.get_json())
+    print("======================================")
+    return "SUCCESS"
 
 if __name__ == "__main__":
     app.run(debug=True)
