@@ -6,7 +6,7 @@ import airplane from '../assets/airplane.gif';
 import fetchImg from '../assets/fetch.gif';
 
 function PaymentPortal() {
-	const [runPyText, setRunPyText] = useState('run.py');
+	const [buttonText, setButtonText] = useState('Fetch Token');
 	const [duffelPmtElement, setDuffelPmtElement] = useState(<h4>No Payment Intent Client Token</h4>);
 	const [tokenWaiting, setTokenWaiting] = useState(false);
 	const [loadingImg, setLoadingImg] = useState(airplane);
@@ -16,11 +16,11 @@ function PaymentPortal() {
 		return <Navigate to={redirect.to} />;
 	}
 
-	function getToken() {
+	function fetchToken() {
 		if (!tokenWaiting) {
 			setDuffelPmtElement(<h4>No Payment Intent Client Token</h4>);
 			setTokenWaiting(true);
-			setRunPyText('Fetching Payment Intent Client Token');
+			setButtonText('Fetching Payment Intent Client Token');
 			setLoadingImg(fetchImg);
 
 			fetch('/api/run', { method: 'GET' })
@@ -35,7 +35,7 @@ function PaymentPortal() {
 						/>
 					);
 					setTokenWaiting(false);
-					setRunPyText('run.py');
+					setButtonText('Fetch Token');
 					setLoadingImg(airplane);
 
 					console.log(data);
@@ -57,8 +57,8 @@ function PaymentPortal() {
 			</div>
 			<h1>Payment Portal</h1>
 			<br />
-			<button onClick={() => getToken()}>
-				<h3>{runPyText}</h3>
+			<button onClick={() => fetchToken()}>
+				<h3>{buttonText}</h3>
 			</button>
 			<br />
 			<br />

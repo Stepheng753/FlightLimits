@@ -97,3 +97,13 @@ class Flight:
 
     def __eq__(self, __value: object) -> bool:
         return self.stops == __value.stops
+
+    def convertToDict(self) -> dict:
+        rtnDict = {}
+        rtnDict["id"] = self.id
+        rtnDict["stops"] = self.stops_str()
+        rtnDict["base_amt"] = self.base_amt
+        rtnDict["fare_taxes"] = self.fare_taxes
+        rtnDict["total_currency"] = self.total_currency
+        rtnDict["total_amount"] = self.total_amount
+        return rtnDict
