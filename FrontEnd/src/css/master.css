@@ -1,3 +1,5 @@
+/* @import url('output.css'); */
+
 :root {
 	font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 	line-height: 1.5;
@@ -65,4 +67,41 @@ button:focus-visible {
 	button {
 		background-color: #f9f9f9;
 	}
+}
+
+.logo {
+	height: 6em;
+	padding: 1.5em;
+	will-change: filter;
+	transition: filter 300ms;
+	border: 10px;
+	border-color: red;
+}
+.logo:hover {
+	filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+@keyframes logo-spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.airplane {
+	height: 20em;
+	padding: 0em;
+	border-radius: 10%;
+}
+
+#all_cards {
+	display: flex;
+	flex-direction: column;
+}
+
+.flight-card {
+	font-size: small;
+	margin-top: 1em;
 }

@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import '../css/App.css';
+import FlightCard from './FlightCard';
+import '../css/master.css';
 import airplane from '../assets/airplane.gif';
 
 function SearchFlights() {
-	const [redirect, setRedirect] = useState({ to: '' });
+	const [redirect, setRedirect] = useState({ to: '', state: {}, replace: false });
 	const [searchParams, setSearchParams] = useState({
 		origin: 'SAN',
 		destination: 'ANC',
@@ -16,11 +17,11 @@ function SearchFlights() {
 	});
 
 	if (redirect.to.length > 0) {
-		return <Navigate to={redirect.to} />;
+		return <Navigate to={redirect.to} state={redirect.state} replace={redirect.replace} />;
 	}
 
 	function fetchOffers() {
-		fetch('/api/post_test', {
+		fetch('/api/get_all_offers', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -28,7 +29,9 @@ function SearchFlights() {
 			body: JSON.stringify(searchParams),
 		})
 			.then((res) => res.json())
-			.then((data) => console.log(data));
+			.then((data) => {
+				setRedirect((prevRedirect) => ({ ...prevRedirect, to: '/flight-card', state: { data } }));
+			});
 	}
 
 	function form() {
@@ -104,14 +107,12 @@ function SearchFlights() {
 
 	return (
 		<div>
-			<div>
-				<img
-					src={airplane}
-					className="logo airplane"
-					alt="Flight Limits"
-					onClick={() => setRedirect({ to: '/' })}
-				/>
-			</div>
+			<img
+				src={airplane}
+				className="logo airplane"
+				alt="Flight Limits"
+				onClick={() => setRedirect((prevRedirect) => ({ ...prevRedirect, to: '/' }))}
+			/>
 			<h1>Search Flights</h1>
 			<br />
 			{form()}

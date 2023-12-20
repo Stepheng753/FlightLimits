@@ -96,7 +96,9 @@ class Flight:
         return price_string.strip()
 
     def __eq__(self, __value: object) -> bool:
-        return self.stops == __value.stops
+        if isinstance(__value, Flight):
+            return self.stops == __value.stops
+        return False
 
     def convertToDict(self) -> dict:
         rtnDict = {}

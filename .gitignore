@@ -1,5 +1,6 @@
 __pycache__
-trash_logs/
+logs_test/
+FrontEnd/src/assets_test/
 # Logs
 FrontEnd/logs
 FrontEnd/*.log

@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import githubLogo from './assets/github.png';
 import duffelLogo from './assets/duffel.png';
-import './css/App.css';
+import './css/master.css';
 
 function Home() {
-	const [redirect, setRedirect] = useState({ to: '' });
+	const [redirect, setRedirect] = useState({ to: '', state: {}, replace: false });
 	if (redirect.to.length > 0) {
-		return <Navigate to={redirect.to} />;
+		return <Navigate to={redirect.to} state={redirect.state} replace={redirect.replace} />;
 	}
 
 	return (
@@ -21,12 +21,12 @@ function Home() {
 				</a>
 			</div>
 			<h1>Flight Limits</h1>
-			<button onClick={() => setRedirect({ to: '/payment-portal' })}>
+			<button onClick={() => setRedirect((prevRedirect) => ({ ...prevRedirect, to: '/payment-portal' }))}>
 				<h3>Click Here for Payment Portal</h3>
 			</button>
 			<br />
 			<br />
-			<button onClick={() => setRedirect({ to: '/search-flights' })}>
+			<button onClick={() => setRedirect((prevRedirect) => ({ ...prevRedirect, to: '/search-flights' }))}>
 				<h3>Click Here to Search Flights</h3>
 			</button>
 		</>

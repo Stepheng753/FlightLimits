@@ -9,12 +9,18 @@ class FlightDataLogger:
     def __init__(self, Tracker, log_dir) -> None:
         self.Tracker = Tracker
         self.log_dir = log_dir
-        self.plot_dir = log_dir + "/plots/"
+        self.plot_dir = log_dir + "plots/"
         self.save_file = self.Tracker.slices[0]["origin"] + "_" + \
                             self.Tracker.slices[0]["destination"] + "-" + \
                                 datetime.now().strftime("%m%d%Y_%H-%M")
         self.all_offers = []
         self.currency = self.Tracker.selected_flight.total_currency
+
+    def set_all_offers(self, all_offers) -> None:
+        self.all_offers = all_offers
+
+    def set_plot_dir(self, plot_dir) -> None:
+        self.plot_dir = plot_dir
 
     def get_all_offers(self, num_iterations, time_interval=0) -> None:
         self.all_offers = [self.Tracker.selected_flight]

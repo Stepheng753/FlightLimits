@@ -1,8 +1,13 @@
-from flask import request
+from duffel_api import Duffel
+from flask import request, send_file
+from FlightData.nodes.Flight import Flight
 from FlightData.FlightDataTracker import FlightDataTracker
 from FlightData.FlightDataLogger import FlightDataLogger
 from FlightData.FlightDataLimit import FlightDataLimit
 from FlightData.FlightDataPmt import FlightDataPmt
+
+access_token = "duffel_test_83IaIdX58kDt2kWhvu3mMQZkbZB2mfsfPE5sO-KHld-"
+duffel = Duffel(access_token=access_token)
 
 def index():
     return {}
@@ -53,7 +58,34 @@ def get_all_offers():
     tracker.set_passengers(passengers=passengers)
     tracker.set_cabin_class(cabin_class=cabin_class)
     all_offers = tracker.get_all_offers()
-    rtn_offers = {}
+    tracker_info = {"tracker_slices": tracker.slices, "tracker_passengers" : tracker.passengers, "tracker_cabin_class" : tracker.cabin_class}
+    offer_info = {}
     for i in range(0, 5):
-        rtn_offers[str(i)] = all_offers[i].convertToDict()
-    return rtn_offers
+        offer_info[str(i)] = all_offers[i].convertToDict()
+    return {"tracker_info" : tracker_info, "offer_info" : offer_info}
+
+def get_offer_below_limit():
+    params = request.get_json()
+    id = params["id"]
+    tracker_info = params["trackerInfo"]
+    max_iterations = params["maxIterations"]
+    time_interval = params["timeInterval"]
+    limit_val = params["limitVal"]
+
+    tracker = FlightDataTracker(tracker_info["tracker_slices"], tracker_info["tracker_passengers"], tracker_info["tracker_cabin_class"])
+    offer = tracker.get_offer(id)
+    tracker.set_selected_flight(Flight(offer))
+
+    limit = FlightDataLimit(Tracker=tracker, limit_val=limit_val)
+    flight = limit.get_flight_at_limit(max_iterations=max_iterations, time_interval=time_interval)
+
+    if flight != -1:
+            all_offers = limit.get_all_offers()
+            logger = FlightDataLogger(Tracker=tracker, log_dir="logs_test/")
+            logger.set_plot_dir("../FrontEnd/src/assets_test/")
+            logger.set_all_offers(all_offers)
+            logger.create_log(print_all_offers=False)
+            logger.create_plot(limit_value=limit_val)
+
+            return {"flight": flight.convertToDict(), "plot": logger.save_file + ".png"}
+    return {"ERROR": "Could Not Find Order Under Limit!"}

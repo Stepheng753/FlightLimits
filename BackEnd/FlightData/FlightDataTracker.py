@@ -36,6 +36,9 @@ class FlightDataTracker:
     def set_selected_flight(self, selected_flight) -> None:
         self.selected_flight = selected_flight
 
+    def get_offer(self, id) -> object:
+        return duffel.offers.get(id)
+
     def get_all_offers(self) -> list:
         offer_request = duffel.offer_requests.create() \
                 .slices(self.slices) \
