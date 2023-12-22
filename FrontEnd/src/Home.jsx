@@ -21,11 +21,6 @@ function Home() {
 				</a>
 			</div>
 			<h1>Flight Limits</h1>
-			<button onClick={() => setRedirect((prevRedirect) => ({ ...prevRedirect, to: '/payment-portal' }))}>
-				<h3>Click Here for Payment Portal</h3>
-			</button>
-			<br />
-			<br />
 			<button onClick={() => setRedirect((prevRedirect) => ({ ...prevRedirect, to: '/search-flights' }))}>
 				<h3>Click Here to Search Flights</h3>
 			</button>

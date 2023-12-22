@@ -5,7 +5,7 @@ import airplane from '../assets/airplane.gif';
 
 function FlightCard(props) {
 	const [redirect, setRedirect] = useState({ to: '', state: {}, replace: false });
-	const [limitParams, setLimitParams] = useState({ maxIterations: 25, timeInterval: 0, limitVal: 375 });
+	const [limitParams, setLimitParams] = useState({ maxIterations: 25, timeInterval: 0, limitVal: 200 });
 	const [plotPath, setPlotPath] = useState('');
 	const location = useLocation();
 	let flights = location.state.data;
@@ -30,8 +30,12 @@ function FlightCard(props) {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				console.log(data);
 				setPlotPath('src/assets_test/' + data.plot);
+				setRedirect((prevRedirect) => ({
+					...prevRedirect,
+					to: '/payment-portal',
+					state: { flight: data.flight },
+				}));
 			});
 	}
 

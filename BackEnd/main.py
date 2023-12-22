@@ -9,6 +9,10 @@ from FlightData.FlightDataPmt import FlightDataPmt
 access_token = "duffel_test_83IaIdX58kDt2kWhvu3mMQZkbZB2mfsfPE5sO-KHld-"
 duffel = Duffel(access_token=access_token)
 
+def get_param_value(params, key):
+    return params["data"][params["indices"][key]]["value"]
+
+
 def index():
     return {}
 
@@ -42,16 +46,16 @@ def run_preset_params():
 
 def get_all_offers():
     params = request.get_json()
-    origin = params["origin"]
-    destination = params["destination"]
-    depart_date = params["departDate"]
-    return_date = params["returnDate"]
+    origin = get_param_value(params, "Origin")
+    destination = get_param_value(params, "Destination")
+    depart_date = get_param_value(params, "Depart Date")
+    return_date = get_param_value(params, "Return Date")
     passengers = []
-    for _ in range(0, int(params["numAdults"])):
+    for _ in range(0, int(get_param_value(params, "Number of Adults"))):
         passengers.append({"age": 18})
-    for _ in range(0, int(params["numChilds"])):
+    for _ in range(0, int(get_param_value(params, "Number of Children"))):
         passengers.append({"age": 1})
-    cabin_class = params["cabin"]
+    cabin_class = get_param_value(params, "Cabin")
 
     tracker = FlightDataTracker()
     tracker.set_slices(origin=origin, destination=destination, depart_date=depart_date, return_date=return_date)
@@ -89,3 +93,21 @@ def get_offer_below_limit():
 
             return {"flight": flight.convertToDict(), "plot": logger.save_file + ".png"}
     return {"ERROR": "Could Not Find Order Under Limit!"}
+
+def order_flight():
+    params = request.get_json()
+    tracker = FlightDataTracker()
+    flight = Flight(tracker.get_offer(params["flight_id"]))
+    flight.passengers[0].set_family_name(params["lastName"])
+    flight.passengers[0].set_given_name(params["firstName"])
+    flight.passengers[0].set_title(params["title"])
+    flight.passengers[0].set_dob(params["dob"])
+    flight.passengers[0].set_gender(params["gender"])
+    flight.passengers[0].set_phone_number(params["phoneNum"])
+    flight.passengers[0].set_email(params["email"])
+
+    pmt = FlightDataPmt(flight=flight)
+    order = pmt.create_order()
+    if order.id != None:
+        return {"order" : order, "success" : True, "error": "Failed"}
+    return {"success" : False, "error" : "Could Not Place Order"}
