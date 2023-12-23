@@ -1,4 +1,4 @@
-export function form(inputs, setInputsFunc) {
+export function Form(inputs, setInputsFunc) {
 	let form = [];
 	for (let i = 0; i < inputs.length; i++) {
 		let input = inputs[i];

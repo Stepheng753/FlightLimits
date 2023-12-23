@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import FlightCard from './FlightCard';
-import { form, convertFormDataToJSON } from '../Globals/Form';
+import { Form, convertFormDataToJSON } from '../Globals/Form';
 import '../css/master.css';
 import airplane from '../assets/airplane.gif';
 
-function SearchFlights() {
+function SearchFlights(props) {
 	const [redirect, setRedirect] = useState({ to: '', state: {}, replace: false });
 	const [searchParams, setSearchParams] = useState([
 		{ label: 'Origin', type: 'text', value: 'SAN' },
@@ -45,7 +44,7 @@ function SearchFlights() {
 			/>
 			<h1>Search Flights</h1>
 			<br />
-			{form(searchParams, setSearchParams)}
+			{Form(searchParams, setSearchParams)}
 			<br />
 			<button onClick={() => fetchOffers()}>
 				<h3>Fetch Offers</h3>
