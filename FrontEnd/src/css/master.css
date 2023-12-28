@@ -53,7 +53,7 @@ button:hover {
 }
 button:focus,
 button:focus-visible {
-	outline: 4px auto -webkit-focus-ring-color;
+	filter: invert(80%);
 }
 
 @media (prefers-color-scheme: light) {

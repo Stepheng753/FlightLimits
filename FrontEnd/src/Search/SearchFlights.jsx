@@ -21,6 +21,10 @@ function SearchFlights(props) {
 	}
 
 	function fetchOffers() {
+		if (searchParams[5].value > searchParams[4].value) {
+			throw new Error('Num Children Must be Less than or Equal to Num Adults');
+			return;
+		}
 		fetch('/api/get_all_offers', {
 			method: 'POST',
 			headers: {

@@ -60,6 +60,8 @@ class Flight:
                 self.infants.append(Passenger(self.offer.passengers[i].id, self.offer.passengers[i].type))
             else:
                 self.passengers.append(Passenger(self.offer.passengers[i].id, self.offer.passengers[i].type))
+        for i in range(0, len(self.infants)):
+            self.passengers[i].set_infant_passenger_id(self.infants[i].id)
 
     def get_passengers_list_dict(self):
         passenger_list_dict = []
@@ -69,6 +71,11 @@ class Flight:
             passenger_list_dict.append(infant.to_dict())
         return passenger_list_dict
 
+    def get_passengers_dict(self, pass_infant_list):
+        passenger_list = {}
+        for i in range(0, len(pass_infant_list)):
+            passenger_list[str(i)] = pass_infant_list[i].to_dict()
+        return passenger_list
 
     def __str__(self) -> str:
         rtnStr = "-----------------------------------------------------------------\n"
@@ -108,4 +115,6 @@ class Flight:
         rtnDict["fare_taxes"] = self.fare_taxes
         rtnDict["total_currency"] = self.total_currency
         rtnDict["total_amount"] = self.total_amount
+        rtnDict["passengers"] = self.get_passengers_dict(self.passengers)
+        rtnDict["infants"] = self.get_passengers_dict(self.infants)
         return rtnDict

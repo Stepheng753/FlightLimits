@@ -9,6 +9,8 @@ class FlightDataLimit:
 
     def get_flight_at_limit(self, max_iterations, time_interval) -> Flight:
         self.all_offers = [self.Tracker.selected_flight]
+        if self.Tracker.selected_flight.total_amount <= self.limit_val:
+            return self.Tracker.selected_flight
 
         for _ in range(0, max_iterations):
             curr_info = self.Tracker.get_updated_selected_flight_info()
