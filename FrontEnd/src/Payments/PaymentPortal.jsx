@@ -1,11 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { MultiForm } from '../Globals/Form';
-import { copyArray } from '../Globals/ArrayCopy';
-import '../css/master.css';
-import airplane from '../assets/airplane.gif';
+import { MainImage, MultiForm, copyArray, fetch_post } from '../Globals/Globals';
 
-function PaymentPortal() {
+function PaymentPortal(props) {
 	const [redirect, setRedirect] = useState({ to: '', state: {}, replace: false });
 	const template_passenger_form = [
 		{ label: 'First Name', type: 'text', value: 'Stephen' },
@@ -19,26 +16,25 @@ function PaymentPortal() {
 	const [passengersParams, setPassengersParams] = useState([]);
 	const location = useLocation();
 	let flight = location.state.data;
-	const numAdults = Object.keys(flight.passengers).length;
+	const numAdults = Object.keys(flight.adults).length;
+	const numChildren = Object.keys(flight.children).length;
 	const numInfants = Object.keys(flight.infants).length;
 
 	useEffect(() => {
-		let adult_form_params = copyArray(template_passenger_form);
-		let infant_form_params = copyArray(template_passenger_form);
-		for (let i = 0; i < adult_form_params.length; i++) {
-			adult_form_params[i].label = 'Adult ' + adult_form_params[i].label;
+		let all_passenger_forms = [];
+		let type_passengers = [
+			{ type: 'Adult', count: numAdults },
+			{ type: 'Child', count: numChildren },
+			{ type: 'Infant', count: numInfants },
+		];
+		for (let i = 0; i < type_passengers.length; i++) {
+			let form_params = copyArray(template_passenger_form);
+			for (let j = 0; j < form_params.length; j++) {
+				form_params[j].label = type_passengers[i].type + ' ' + form_params[j].label;
+			}
+			all_passenger_forms = all_passenger_forms.concat(Array(type_passengers[i].count).fill(form_params));
 		}
-		for (let i = 0; i < infant_form_params.length; i++) {
-			infant_form_params[i].label = 'Infant ' + infant_form_params[i].label;
-		}
-		let all_passenger_form_params = [];
-		for (let i = 0; i < numAdults; i++) {
-			all_passenger_form_params.push(adult_form_params);
-		}
-		for (let i = 0; i < numInfants; i++) {
-			all_passenger_form_params.push(infant_form_params);
-		}
-		setPassengersParams(all_passenger_form_params);
+		setPassengersParams(all_passenger_forms);
 	}, []);
 
 	if (redirect.to.length > 0) {
@@ -46,48 +42,42 @@ function PaymentPortal() {
 	}
 
 	function convertMultiFormDataToJSON() {
-		let rtnJSON = { adults: {}, infants: {} };
-		let i = 0;
-		while (i < numAdults) {
-			rtnJSON.adults[i] = { indices: {}, data: passengersParams[i] };
-			for (let j = 0; j < passengersParams[i].length; j++) {
-				rtnJSON.adults[i].indices[passengersParams[i][j].label] = j;
+		let rtnJSON = { adults: {}, children: {}, infants: {} };
+		let key = '';
+		let idx = 0;
+		for (let i = 0; i < passengersParams.length; i++) {
+			if (i < numAdults) {
+				key = 'adults';
+				idx = i;
+			} else if (i >= numAdults && i < numAdults + numChildren) {
+				key = 'children';
+				idx = i - numAdults;
+			} else {
+				key = 'infants';
+				idx = i - (numAdults + numChildren);
 			}
-			i++;
-		}
-		while (i < passengersParams.length) {
-			rtnJSON.infants[i - numAdults] = { indices: {}, data: passengersParams[i] };
+			rtnJSON[key][idx] = { indices: {}, data: passengersParams[i] };
 			for (let j = 0; j < passengersParams[i].length; j++) {
-				rtnJSON.infants[i - numAdults].indices[passengersParams[i][j].label] = j;
+				rtnJSON[key][idx].indices[passengersParams[i][j].label] = j;
 			}
-			i++;
 		}
 		return rtnJSON;
 	}
 
 	function fetchOrderFlight() {
-		fetch('/api/order_flight', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ ...convertMultiFormDataToJSON(), flight_id: flight.id }),
-		})
-			.then((res) => res.json())
-			.then((data) => {
-				console.log(data.order.id);
-			});
+		let api_link = '/api/order_flight';
+		let body = JSON.stringify({ ...convertMultiFormDataToJSON(), flight_id: flight.id });
+		let afterFunc = (data) => {
+			setRedirect((prevRedirect) => ({ ...prevRedirect, to: '/success', state: { data: data.order } }));
+		};
+
+		fetch_post(api_link, body, afterFunc);
 	}
 
 	return (
 		<div>
-			<img
-				src={airplane}
-				className="logo airplane"
-				alt="Flight Limits"
-				onClick={() => setRedirect((prevRedirect) => ({ ...prevRedirect, to: '/' }))}
-			/>
-			<h1 onClick={() => createAllPassengerFormData()}>Payment Portal</h1>
+			<MainImage redirectFunc={setRedirect} />
+			<h1>Payment Portal</h1>
 			<br />
 			{MultiForm(passengersParams, setPassengersParams)}
 			<br />

@@ -1,4 +1,4 @@
-import { copyArray } from './ArrayCopy';
+import { copyArray } from './HelperFunctions';
 
 export function Form(inputs, setInputsFunc) {
 	let form = [];

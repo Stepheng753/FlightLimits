@@ -1,15 +1,13 @@
 import { useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { Form, convertFormDataToJSON } from '../Globals/Form';
-import '../css/master.css';
-import airplane from '../assets/airplane.gif';
+import { MainImage, Form, convertFormDataToJSON, fetch_post } from '../Globals/Globals';
 
-function FlightCard(props) {
+function FlightCards(props) {
 	const [redirect, setRedirect] = useState({ to: '', state: {}, replace: false });
 	const [limitParams, setLimitParams] = useState([
 		{ label: 'Max Iterations', type: 'number', value: 25, min: 0 },
 		{ label: 'Time Interval', type: 'number', value: 0, min: 0 },
-		{ label: 'Limit Value', type: 'number', value: 200, min: 0 },
+		{ label: 'Limit Value', type: 'number', value: 400, min: 0 },
 	]);
 	const location = useLocation();
 	let flights = location.state.data;
@@ -19,25 +17,21 @@ function FlightCard(props) {
 	}
 
 	function fetchOfferUnderLimit(key) {
-		fetch('/api/get_offer_below_limit', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				...convertFormDataToJSON(limitParams),
-				flight_id: flights.offer_info[key].id,
-				tracker_info: flights.tracker_info,
-			}),
-		})
-			.then((res) => res.json())
-			.then((data) => {
-				setRedirect((prevRedirect) => ({
-					...prevRedirect,
-					to: '/payment-portal',
-					state: { data: data.flight },
-				}));
-			});
+		let api_link = '/api/get_offer_below_limit';
+		let body = JSON.stringify({
+			...convertFormDataToJSON(limitParams),
+			flight_id: flights.offer_info[key].id,
+			tracker_info: flights.tracker_info,
+		});
+		let afterFunc = (data) => {
+			setRedirect((prevRedirect) => ({
+				...prevRedirect,
+				to: '/payment-portal',
+				state: { data: data.flight },
+			}));
+		};
+
+		fetch_post(api_link, body, afterFunc);
 	}
 
 	function renderCards() {
@@ -60,12 +54,7 @@ function FlightCard(props) {
 
 	return (
 		<div>
-			<img
-				src={airplane}
-				className="logo airplane"
-				alt="Flight Limits"
-				onClick={() => setRedirect((prevRedirect) => ({ ...prevRedirect, to: '/' }))}
-			/>
+			<MainImage redirectFunc={setRedirect} />
 			<h1>Flight Cards</h1>
 			{Form(limitParams, setLimitParams)}
 			{renderCards()}
@@ -73,4 +62,4 @@ function FlightCard(props) {
 	);
 }
 
-export default FlightCard;
+export default FlightCards;

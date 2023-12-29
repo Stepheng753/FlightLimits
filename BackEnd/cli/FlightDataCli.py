@@ -29,12 +29,14 @@ class FlightDataCli:
 
         num_adult_passengers = int(input(self.input_format("Enter in the Number of Adult Passengers")))
         num_child_passengers = int(input(self.input_format("Enter in the Number of Child Passengers")))
+        num_infant_passengers = int(input(self.input_format("Enter in the Number of Infant Passengers")))
         passengers = []
         for _ in range(0, num_adult_passengers):
             passengers.append({"type" : "adult"})
-        for child_idx in range(1, num_child_passengers + 1):
-            age = int(input((self.input_format("Enter in Age of Child #" + str(child_idx) ))))
-            passengers.append({"age" : age})
+        for _ in range(0, num_child_passengers):
+            passengers.append({"type" : "child"})
+        for _ in range(0, num_infant_passengers):
+            passengers.append({"type" : "infant_without_seat"})
 
         cabin_classes = ["first", "business", "premium_economy", "economy"]
         print("All Types of Cabin Classes")
@@ -107,8 +109,39 @@ class FlightDataCli:
         print("\n")
 
     def input_passenger_data(self):
+        for i in range(0, len(self.order_flight.adults)):
+            family_name = input(self.input_format("Adult #" + str(i + 1) + " Enter in the Family Name"))
+            given_name = input(self.input_format("Adult #" + str(i + 1) + " Enter in the Given Name"))
+            title = input(self.input_format("Adult #" + str(i + 1) + " Enter in Title"))
+            dob = input(self.input_format("Adult #" + str(i + 1) + " Enter in Date of Birth (YYYY-MM-DD)"))
+            gender = input(self.input_format("Adult #" + str(i + 1) + " Enter in Gender"))
+            phone_number = input(self.input_format("Adult #" + str(i + 1) + " Enter in Phone Number"))
+            email = input(self.input_format("Adult #" + str(i + 1) + " Enter in Email"))
+            self.order_flight.adults[i].set_family_name(family_name)
+            self.order_flight.adults[i].set_given_name(given_name)
+            self.order_flight.adults[i].set_title(title)
+            self.order_flight.adults[i].set_dob(dob)
+            self.order_flight.adults[i].set_gender(gender)
+            self.order_flight.adults[i].set_phone_number(phone_number)
+            self.order_flight.adults[i].set_email(email)
+            print()
+        for i in range(0, len(self.order_flight.children)):
+            family_name = input(self.input_format("Child #" + str(i + 1) + " Enter in the Family Name"))
+            given_name = input(self.input_format("Child #" + str(i + 1) + " Enter in the Given Name"))
+            title = input(self.input_format("Child #" + str(i + 1) + " Enter in Title"))
+            dob = input(self.input_format("Child #" + str(i + 1) + " Enter in Date of Birth (YYYY-MM-DD)"))
+            gender = input(self.input_format("Child #" + str(i + 1) + " Enter in Gender"))
+            phone_number = input(self.input_format("Child #" + str(i + 1) + " Enter in Phone Number"))
+            email = input(self.input_format("Child #" + str(i + 1) + " Enter in Email"))
+            self.order_flight.children[i].set_family_name(family_name)
+            self.order_flight.children[i].set_given_name(given_name)
+            self.order_flight.children[i].set_title(title)
+            self.order_flight.children[i].set_dob(dob)
+            self.order_flight.children[i].set_gender(gender)
+            self.order_flight.children[i].set_phone_number(phone_number)
+            self.order_flight.children[i].set_email(email)
+            print()
         for i in range(0, len(self.order_flight.infants)):
-            age = float(input(self.input_format("Infant #" + str(i + 1) + " Enter in Age")))
             family_name = input(self.input_format("Infant #" + str(i + 1) + " Enter in the Family Name"))
             given_name = input(self.input_format("Infant #" + str(i + 1) + " Enter in the Given Name"))
             title = input(self.input_format("Infant #" + str(i + 1) + " Enter in Title"))
@@ -116,7 +149,6 @@ class FlightDataCli:
             gender = input(self.input_format("Infant #" + str(i + 1) + " Enter in Gender"))
             phone_number = input(self.input_format("Infant #" + str(i + 1) + " Enter in Phone Number"))
             email = input(self.input_format("Infant #" + str(i + 1) + " Enter in Email"))
-            self.order_flight.infants[i].set_age(age)
             self.order_flight.infants[i].set_family_name(family_name)
             self.order_flight.infants[i].set_given_name(given_name)
             self.order_flight.infants[i].set_title(title)
@@ -125,29 +157,6 @@ class FlightDataCli:
             self.order_flight.infants[i].set_phone_number(phone_number)
             self.order_flight.infants[i].set_email(email)
             print()
-        j = 0
-        for i in range(0, len(self.order_flight.passengers)):
-            age = float(input(self.input_format("Passenger #" + str(i + 1) + " Enter in Age")))
-            family_name = input(self.input_format("Passenger #" + str(i + 1) + " Enter in the Family Name"))
-            given_name = input(self.input_format("Passenger #" + str(i + 1) + " Enter in the Given Name"))
-            title = input(self.input_format("Passenger #" + str(i + 1) + " Enter in Title"))
-            dob = input(self.input_format("Passenger #" + str(i + 1) + " Enter in Date of Birth (YYYY-MM-DD)"))
-            gender = input(self.input_format("Passenger #" + str(i + 1) + " Enter in Gender"))
-            phone_number = input(self.input_format("Passenger #" + str(i + 1) + " Enter in Phone Number"))
-            email = input(self.input_format("Passenger #" + str(i + 1) + " Enter in Email"))
-            self.order_flight.passengers[i].set_age(age)
-            self.order_flight.passengers[i].set_family_name(family_name)
-            self.order_flight.passengers[i].set_given_name(given_name)
-            self.order_flight.passengers[i].set_title(title)
-            self.order_flight.passengers[i].set_dob(dob)
-            self.order_flight.passengers[i].set_gender(gender)
-            self.order_flight.passengers[i].set_phone_number(phone_number)
-            self.order_flight.passengers[i].set_email(email)
-            if j < len(self.order_flight.infants):
-                self.order_flight.passengers[i].set_infant_passenger_id(self.order_flight.infants[j].id)
-                j += 1
-            print()
-
         print()
 
     def display_order_completion(self):

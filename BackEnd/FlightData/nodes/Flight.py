@@ -53,20 +53,25 @@ class Flight:
         self.created_at = self.offer.created_at
 
     def set_passengers(self):
-        self.passengers = []
+        self.adults = []
+        self.children = []
         self.infants = []
         for i in range(0, len(self.offer.passengers)):
             if "infant" in self.offer.passengers[i].type:
                 self.infants.append(Passenger(self.offer.passengers[i].id, self.offer.passengers[i].type))
+            elif "child" in self.offer.passengers[i].type:
+                self.children.append(Passenger(self.offer.passengers[i].id, self.offer.passengers[i].type))
             else:
-                self.passengers.append(Passenger(self.offer.passengers[i].id, self.offer.passengers[i].type))
+                self.adults.append(Passenger(self.offer.passengers[i].id, self.offer.passengers[i].type))
         for i in range(0, len(self.infants)):
-            self.passengers[i].set_infant_passenger_id(self.infants[i].id)
+            self.adults[i].set_infant_passenger_id(self.infants[i].id)
 
     def get_passengers_list_dict(self):
         passenger_list_dict = []
-        for passenger in self.passengers:
-            passenger_list_dict.append(passenger.to_dict())
+        for adult in self.adults:
+            passenger_list_dict.append(adult.to_dict())
+        for child in self.children:
+            passenger_list_dict.append(child.to_dict())
         for infant in self.infants:
             passenger_list_dict.append(infant.to_dict())
         return passenger_list_dict
@@ -115,6 +120,7 @@ class Flight:
         rtnDict["fare_taxes"] = self.fare_taxes
         rtnDict["total_currency"] = self.total_currency
         rtnDict["total_amount"] = self.total_amount
-        rtnDict["passengers"] = self.get_passengers_dict(self.passengers)
+        rtnDict["adults"] = self.get_passengers_dict(self.adults)
+        rtnDict["children"] = self.get_passengers_dict(self.children)
         rtnDict["infants"] = self.get_passengers_dict(self.infants)
         return rtnDict

@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { Form, convertFormDataToJSON } from '../Globals/Form';
-import '../css/master.css';
-import airplane from '../assets/airplane.gif';
+import { MainImage, Form, convertFormDataToJSON, fetch_post } from '../Globals/Globals';
 
 function SearchFlights(props) {
 	const [redirect, setRedirect] = useState({ to: '', state: {}, replace: false });
@@ -12,7 +10,8 @@ function SearchFlights(props) {
 		{ label: 'Depart Date', type: 'date', value: '2024-01-01' },
 		{ label: 'Return Date', type: 'date', value: '2024-01-15' },
 		{ label: 'Number of Adults', type: 'number', value: 1, min: 0 },
-		{ label: 'Number of Children', type: 'number', value: 0, min: 0 },
+		{ label: 'Number of Children', type: 'number', value: 1, min: 0 },
+		{ label: 'Number of Infants', type: 'number', value: 1, min: 0 },
 		{ label: 'Cabin', type: 'text', value: 'economy' },
 	]);
 
@@ -21,31 +20,18 @@ function SearchFlights(props) {
 	}
 
 	function fetchOffers() {
-		if (searchParams[5].value > searchParams[4].value) {
-			throw new Error('Num Children Must be Less than or Equal to Num Adults');
-			return;
-		}
-		fetch('/api/get_all_offers', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(convertFormDataToJSON(searchParams)),
-		})
-			.then((res) => res.json())
-			.then((data) => {
-				setRedirect((prevRedirect) => ({ ...prevRedirect, to: '/flight-card', state: { data } }));
-			});
+		let api_link = '/api/get_all_offers';
+		let body = JSON.stringify(convertFormDataToJSON(searchParams));
+		let afterFunc = (data) => {
+			setRedirect((prevRedirect) => ({ ...prevRedirect, to: '/flight-cards', state: { data } }));
+		};
+
+		fetch_post(api_link, body, afterFunc);
 	}
 
 	return (
 		<div>
-			<img
-				src={airplane}
-				className="logo airplane"
-				alt="Flight Limits"
-				onClick={() => setRedirect((prevRedirect) => ({ ...prevRedirect, to: '/' }))}
-			/>
+			<MainImage redirectFunc={setRedirect} />
 			<h1>Search Flights</h1>
 			<br />
 			{Form(searchParams, setSearchParams)}

@@ -19,9 +19,11 @@ def get_all_offers():
     return_date = get_param_value(params, "Return Date")
     passengers = []
     for _ in range(0, int(get_param_value(params, "Number of Adults"))):
-        passengers.append({"age": 18})
+        passengers.append({"type": "adult"})
     for _ in range(0, int(get_param_value(params, "Number of Children"))):
-        passengers.append({"age": 1})
+        passengers.append({"type": "child"})
+    for _ in range(0, int(get_param_value(params, "Number of Infants"))):
+        passengers.append({"type": "infant_without_seat"})
     cabin_class = get_param_value(params, "Cabin")
 
     tracker = FlightDataTracker()
@@ -62,13 +64,21 @@ def order_flight():
     tracker = FlightDataTracker()
     flight = Flight(tracker.get_offer(params["flight_id"]))
     for i in range(0, len(params["adults"])):
-        flight.passengers[i].set_family_name(get_param_value(params["adults"][str(i)], "Adult Last Name"))
-        flight.passengers[i].set_given_name(get_param_value(params["adults"][str(i)], "Adult First Name"))
-        flight.passengers[i].set_title(get_param_value(params["adults"][str(i)], "Adult Title"))
-        flight.passengers[i].set_dob(get_param_value(params["adults"][str(i)], "Adult Date of Birth"))
-        flight.passengers[i].set_gender(get_param_value(params["adults"][str(i)], "Adult Gender"))
-        flight.passengers[i].set_phone_number(get_param_value(params["adults"][str(i)], "Adult Phone Number"))
-        flight.passengers[i].set_email(get_param_value(params["adults"][str(i)], "Adult Email"))
+        flight.adults[i].set_family_name(get_param_value(params["adults"][str(i)], "Adult Last Name"))
+        flight.adults[i].set_given_name(get_param_value(params["adults"][str(i)], "Adult First Name"))
+        flight.adults[i].set_title(get_param_value(params["adults"][str(i)], "Adult Title"))
+        flight.adults[i].set_dob(get_param_value(params["adults"][str(i)], "Adult Date of Birth"))
+        flight.adults[i].set_gender(get_param_value(params["adults"][str(i)], "Adult Gender"))
+        flight.adults[i].set_phone_number(get_param_value(params["adults"][str(i)], "Adult Phone Number"))
+        flight.adults[i].set_email(get_param_value(params["adults"][str(i)], "Adult Email"))
+    for i in range(0, len(params["children"])):
+        flight.children[i].set_family_name(get_param_value(params["children"][str(i)], "Child Last Name"))
+        flight.children[i].set_given_name(get_param_value(params["children"][str(i)], "Child First Name"))
+        flight.children[i].set_title(get_param_value(params["children"][str(i)], "Child Title"))
+        flight.children[i].set_dob(get_param_value(params["children"][str(i)], "Child Date of Birth"))
+        flight.children[i].set_gender(get_param_value(params["children"][str(i)], "Child Gender"))
+        flight.children[i].set_phone_number(get_param_value(params["children"][str(i)], "Child Phone Number"))
+        flight.children[i].set_email(get_param_value(params["children"][str(i)], "Child Email"))
     for i in range(0, len(params["infants"])):
         flight.infants[i].set_family_name(get_param_value(params["infants"][str(i)], "Infant Last Name"))
         flight.infants[i].set_given_name(get_param_value(params["infants"][str(i)], "Infant First Name"))
