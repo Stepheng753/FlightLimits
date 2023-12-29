@@ -1,7 +1,6 @@
 from flask import request
 from FlightData.nodes.Flight import Flight
 from FlightData.FlightDataTracker import FlightDataTracker
-from FlightData.FlightDataLogger import FlightDataLogger
 from FlightData.FlightDataLimit import FlightDataLimit
 from FlightData.FlightDataPmt import FlightDataPmt
 
@@ -47,7 +46,9 @@ def get_offer_below_limit():
     time_interval = int(get_param_value(params, "Time Interval"))
     limit_val = int(get_param_value(params, "Limit Value"))
 
-    tracker = FlightDataTracker(tracker_info["tracker_slices"], tracker_info["tracker_passengers"], tracker_info["tracker_cabin_class"])
+    tracker = FlightDataTracker(tracker_info["tracker_slices"],
+                                tracker_info["tracker_passengers"],
+                                tracker_info["tracker_cabin_class"])
     offer = tracker.get_offer(id)
     tracker.set_selected_flight(Flight(offer))
 
